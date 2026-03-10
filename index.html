@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kasus Chat</title>
+<style>
+body{
+font-family: Arial;
+background:#111;
+color:white;
+text-align:center;
+}
+
+#chat{
+width:90%;
+max-width:600px;
+margin:auto;
+height:400px;
+overflow-y:scroll;
+border:1px solid #444;
+padding:10px;
+}
+
+input{
+padding:10px;
+margin:5px;
+}
+
+button{
+padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Kasus Chat</h1>
+
+<div id="chat"></div>
+
+<input id="name" placeholder="Your name">
+<input id="message" placeholder="Message">
+<button onclick="send()">Send</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+databaseURL: "YOUR_DB_URL",
+projectId: "YOUR_PROJECT",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const chat = ref(db, "messages");
+
+function send(){
+
+let name = document.getElementById("name").value;
+let message = document.getElementById("message").value;
+
+push(chat,{
+name:name,
+message:message
+});
+
+document.getElementById("message").value="";
+}
+
+onChildAdded(chat,(data)=>{
+
+let msg = data.val();
+
+let div = document.createElement("div");
+
+div.innerHTML = "<b>"+msg.name+":</b> "+msg.message;
+
+document.getElementById("chat").appendChild(div);
+
+});
+
+window.send = send;
+
+</script>
+
+</body>
+</html>
