@@ -1,6 +1,49 @@
+<!DOCTYPE html>
 <html>
-  <script>
-    const ADMIN_PASSWORD = "mypassword";
+<head>
+<title>Admin Dashboard</title>
+
+<style>
+body{
+font-family: Arial;
+background:#111;
+color:white;
+text-align:center;
+}
+
+input{
+padding:10px;
+margin:5px;
+}
+
+button{
+padding:10px;
+margin:5px;
+}
+
+#bannedList{
+margin-top:20px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<button onclick="clearChat()">Clear Chat</button>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import { getDatabase, ref, set, remove, onValue }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+
+// 🔑 ADMIN PASSWORD
+const ADMIN_PASSWORD = "davidcute88d";
 
 let pass = prompt("Enter admin password");
 
@@ -9,26 +52,33 @@ document.body.innerHTML = "Access denied";
 throw new Error("Not admin");
 }
 
-import { ref, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-function clearChat(){
+// 🔥 FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyCl_6vsYoZkEBMUNf0P4CK01hKCwA5P0XQ",
+  authDomain: "kasuschat.firebaseapp.com",
+  databaseURL: "https://kasuschat-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "kasuschat",
+  storageBucket: "kasuschat.firebasestorage.app",
+  messagingSenderId: "953505535371",
+  appId: "1:953505535371:web:0d44f20017bc8664948b8e"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+
+// 🧹 CLEAR CHAT
+window.clearChat = function(){
 
 remove(ref(db,"messages"));
 
 alert("Chat cleared");
 
 }
-  </script>
-  <body>
-<h1>Admin Dashboard</h1>
 
-<button onclick="clearChat()">Clear Chat</button>
+</script>
 
-<h2>Ban Username</h2>
-<input id="banName">
-<button onclick="banUser()">Ban</button>
-
-<h2>Banned Users</h2>
-<div id="bannedList"></div>
-  </body>
+</body>
 </html>
