@@ -76,7 +76,7 @@ function send(){
 let name = document.getElementById("name").value;
 let message = document.getElementById("message").value;
 
-// admin command
+// check admin command
 if(message.startsWith("/clear")){
 
 let parts = message.split(" ");
@@ -84,13 +84,17 @@ let pass = parts[1];
 
 if(pass === ADMIN_PASSWORD){
 
-remove(chat);
+remove(chat).then(()=>{
 document.getElementById("chat").innerHTML = "";
+});
 
+}else{
+alert("Wrong admin password");
 }
 
 document.getElementById("message").value="";
 return;
+
 }
 
 push(chat,{
@@ -99,6 +103,7 @@ message:message
 });
 
 document.getElementById("message").value="";
+
 }
 
 onChildAdded(chat,(data)=>{
