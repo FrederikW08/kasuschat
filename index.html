@@ -30,7 +30,7 @@ padding:10px;
 }
 
 #flemming {
-  style="display: none;"
+  display: none;
   position: fixed;
   right: 20px;
   top: 50%;
@@ -134,11 +134,11 @@ onChildAdded(chat,(data)=>{
 let msg = data.val();
 
 let time = new Date(msg.timestamp);
-let formattedTime = time.toLocalTimeString([], {hour: '2-digit', minute '2-digit'});
+let formattedTime = time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
 let div = document.createElement("div");
 
-div.innerHTML = formattedTime +"<b>"+msg.name+":</b> "+msg.message;
+div.innerHTML = "["+formattedTime+"] <b>"+msg.name+":</b> "+msg.message;
 
 document.getElementById("chat").appendChild(div);
 
