@@ -45,12 +45,53 @@ padding:10px;
 
   <div id="chat"></div>
 
+  <div id="typingIndicator"></div>
+
   <input id="name" placeholder="Your name">
   <input id="message" placeholder="Message">
   <button onclick="send()">Send</button>
 </div>
 
   <script type="module">
+
+    import { ref, set, onValue, remove }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const typingRef = ref(db,"typing");
+
+const messageInput = document.getElementById("message");
+
+messageInput.addEventListener("input",()=>{
+
+let name = document.getElementById("name").value;
+
+set(ref(db,"typing/"+name),true);
+
+setTimeout(()=>{
+remove(ref(db,"typing/"+name));
+},2000);
+
+});
+
+    onValue(typingRef,(snapshot)=>{
+
+let indicator = document.getElementById("typingIndicator");
+
+indicator.innerHTML = "";
+
+snapshot.forEach((child)=>{
+
+let name = child.key;
+
+let div = document.createElement("div");
+
+div.innerText = name + " is typing...";
+
+indicator.appendChild(div);
+
+});
+
+});
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, remove } 
