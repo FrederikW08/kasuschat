@@ -70,7 +70,7 @@ padding:10px;
   <div id="chat"></div>
 
   <input id="name" placeholder="Your name">
-  <input id="message" placeholder="Message">
+  <input id="message" placeholder="Message" onkeypress="if(event.key==='Enter') send()">
   <button onclick="send()">Send</button>
 </div>
 
