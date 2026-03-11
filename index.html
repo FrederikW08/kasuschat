@@ -66,6 +66,8 @@ const firebaseConfig = {
   appId: "1:953505535371:web:0d44f20017bc8664948b8e"
 };
 
+const INACTIVITY_LIMIT = 5 * 60 * 1000;
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -139,6 +141,43 @@ alert("Wrong password");
 window.login = login;
 
 const ADMIN_PASSWORD = "bertilsbareboller";
+
+// AUTO LOGOUT AFTER INACTIVITY
+
+const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 minutes
+let inactivityTimer;
+
+function resetInactivityTimer() {
+
+clearTimeout(inactivityTimer);
+
+inactivityTimer = setTimeout(() => {
+
+logoutUser();
+
+}, INACTIVITY_LIMIT);
+
+}
+
+function logoutUser(){
+
+alert("You were logged out due to inactivity");
+
+// Clear login info
+localStorage.removeItem("chatPassword");
+
+// Redirect to login page
+location.reload();
+
+}
+
+// Reset timer on activity
+["click","mousemove","keypress","scroll","touchstart"].forEach(event => {
+document.addEventListener(event, resetInactivityTimer);
+});
+
+// Start timer when page loads
+resetInactivityTimer();
 
 </script>
 
