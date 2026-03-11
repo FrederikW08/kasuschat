@@ -77,7 +77,7 @@ padding:10px;
   <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, remove } 
+import { getDatabase, ref, push, onChildAdded, remove, onValue } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -193,9 +193,6 @@ alert("Wrong password");
 window.login = login;
 
 const ADMIN_PASSWORD = "bertilsbareboller";
-
-import { ref, onValue } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const statusRef = ref(db,"siteStatus/online");
 
