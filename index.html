@@ -30,6 +30,7 @@ padding:10px;
 }
 
 #flemming {
+  style="display: none;"
   position: fixed;
   right: 20px;
   top: 50%;
@@ -95,6 +96,8 @@ function send(){
 let name = document.getElementById("name").value;
 let message = document.getElementById("message").value;
 
+let time = Date.now();
+
 // check admin command
 if(message.startsWith("/clear")){
 
@@ -118,7 +121,8 @@ return;
 
 push(chat,{
 name:name,
-message:message
+message:message,
+timestamp: time
 });
 
 document.getElementById("message").value="";
@@ -129,9 +133,12 @@ onChildAdded(chat,(data)=>{
 
 let msg = data.val();
 
+let time = new Date(msg.timestamp);
+let formattedTime = time.toLocalTimeString([], {hour: '2-digit', minute '2-digit'});
+
 let div = document.createElement("div");
 
-div.innerHTML = "<b>"+msg.name+":</b> "+msg.message;
+div.innerHTML = formattedTime +"<b>"+msg.name+":</b> "+msg.message;
 
 document.getElementById("chat").appendChild(div);
 
