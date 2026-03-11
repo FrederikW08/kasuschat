@@ -194,6 +194,26 @@ window.login = login;
 
 const ADMIN_PASSWORD = "bertilsbareboller";
 
+import { ref, onValue } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const statusRef = ref(db,"siteStatus/online");
+
+onValue(statusRef,(snapshot)=>{
+
+let online = snapshot.val();
+
+if(!online){
+
+document.body.innerHTML = `
+<h1>Chat is currently offline</h1>
+<p>Maintenance in progress</p>
+`;
+
+}
+
+});
+
 </script>
 
 </body>
