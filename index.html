@@ -69,6 +69,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// ASK FOR NOTIFICATION PERMISSION
+if ("Notification" in window) {
+
+if (Notification.permission !== "granted") {
+Notification.requestPermission();
+}
+
+}
+
 const chat = ref(db, "messages");
 
 function send(){
@@ -115,6 +124,21 @@ let div = document.createElement("div");
 div.innerHTML = "<b>"+msg.name+":</b> "+msg.message;
 
 document.getElementById("chat").appendChild(div);
+
+// SHOW NOTIFICATION
+let myName = document.getElementById("name").value;
+
+if(document.hidden && msg.name !== myName){
+
+if(Notification.permission === "granted"){
+
+new Notification(msg.name + " says:", {
+body: msg.message
+});
+
+}
+
+}
 
 });
 
