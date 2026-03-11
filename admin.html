@@ -33,7 +33,28 @@ margin-top:20px;
 
 <button onclick="clearChat()">Clear Chat</button>
 
+<h2>Site Control</h2>
+
+<button onclick="lockSite()">Lock Chat</button>
+<button onclick="unlockSite()">Unlock Chat</button>
+
 <script type="module">
+
+window.lockSite = function(){
+
+set(ref(db,"siteStatus/online"),false);
+
+alert("Chat locked");
+
+}
+
+window.unlockSite = function(){
+
+set(ref(db,"siteStatus/online"),true);
+
+alert("Chat unlocked");
+
+}
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
