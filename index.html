@@ -174,18 +174,39 @@ body: msg.message
 
 window.send = send;
 
-const CHAT_PASSWORD = "pernillestænder";
+const PASSWORD_HASH = "0d08f09ddf93c9c5dbe3f15cd2f022e900b6298b902627d61c18751911e96f38";
 
-function login(){
+async function sha256(text){
+
+const encoder = new TextEncoder();
+const data = encoder.encode(text);
+
+const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+const hashHex = hashArray.map(b => b.toString(16).padStart(2,"0")).join("");
+
+return hashHex;
+
+}
+
+async function login(){
 
 let p = document.getElementById("password").value;
 
-if(p === CHAT_PASSWORD){
+let hash = await sha256(p);
+
+if(hash === PASSWORD_HASH){
+
 document.getElementById("login").style.display = "none";
 document.getElementById("app").style.display = "block";
+
 }
 else{
+
 alert("Wrong password");
+
 }
 
 }
