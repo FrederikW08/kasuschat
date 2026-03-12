@@ -155,6 +155,8 @@ div.innerHTML = "["+formattedTime+"] <b>"+msg.name+":</b> "+msg.message;
 
 document.getElementById("chat").appendChild(div);
 
+document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
+
 // SHOW NOTIFICATION
 let myName = document.getElementById("name").value;
 
