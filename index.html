@@ -81,6 +81,13 @@ font-size:18px;
 font-style:italic;
 }
 
+#typingIndicator{
+height:20px;
+color:#aaa;
+font-style:italic;
+margin-bottom:10px;
+}
+
 </style>
 </head>
 
@@ -97,18 +104,32 @@ font-style:italic;
   <img id="stig" src="https://media.licdn.com/dms/image/v2/D4E03AQE7-gQDf_HcOA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1695446369999?e=1775088000&v=beta&t=XRxKh5iTzsdL9XtULgTiiZzf0P1sKw2jgzt1g8a6jLQ">
 
   <h1>Kasus Chat</h1>
+  
   <div id="quoteBox">
-    <h3>Quote of the Day - 13/03/2026</h3>
-    <p id="quoteText">Så er der en masse børn og mødre der får børn sammen - Stig Ansbak Kassow</p>
+<h3>Quote of the Day</h3>
+
+<p id="quoteText">
+Indtil videre, ingen quote for idag...
+</p>
+
+<button onclick="toggleQuotes()">Previous quotes</button>
+
+<div id="quoteHistory" style="display:none;margin-top:10px;font-size:13px;">
+<p>13/03/2026 - Så er der en masse børn og mødre der får børn sammen - Stig Ansbak Kassow</p>
 </div>
+
+</div>
+  
   <p id="discription1">Inspireret af Flemmings quote:</p>
   <p id="discription2">"Historie, kasus og alt det der...</p>
   <p id="discription2">men hvis bare der fandtes et annonymt og lukket chat sted."</p>
 
   <div id="chat"></div>
 
+  <div id="typingIndicator"></div>
+
   <input id="name" placeholder="Your name">
-  <input id="message" placeholder="Message" onkeypress="if(event.key==='Enter') send()">
+  <input id="message" placeholder="Message" oninput="userTyping()" onkeypress="if(event.key==='Enter') send()">
   <button onclick="send()">Send</button>
 </div>
 
@@ -131,6 +152,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// User is typing ref
+const typingRef = ref(db,"typing");
+
 // ASK FOR NOTIFICATION PERMISSION
 if ("Notification" in window) {
 
@@ -143,6 +167,19 @@ Notification.requestPermission();
 const chat = ref(db, "messages");
 
 function send(){
+
+function userTyping(){
+
+let name = document.getElementById("name").value;
+
+if(name.trim() === "") return;
+
+push(typingRef,{
+user:name,
+time:Date.now()
+});
+
+}
 
 let name = document.getElementById("name").value;
 let message = document.getElementById("message").value;
@@ -212,6 +249,24 @@ body: msg.message
 
 });
 
+onChildAdded(typingRef,(data)=>{
+
+let info = data.val();
+let myName = document.getElementById("name").value;
+
+if(info.user !== myName){
+
+document.getElementById("typingIndicator").innerText =
+info.user + " is typing...";
+
+setTimeout(()=>{
+document.getElementById("typingIndicator").innerText="";
+},2000);
+
+}
+
+});
+
 window.send = send;
 
 const PASSWORD_HASH = "0d08f09ddf93c9c5dbe3f15cd2f022e900b6298b902627d61c18751911e96f38";
@@ -271,6 +326,18 @@ document.body.innerHTML = `
 }
 
 });
+
+function toggleQuotes(){
+
+let box = document.getElementById("quoteHistory");
+
+if(box.style.display === "none"){
+box.style.display = "block";
+}else{
+box.style.display = "none";
+}
+
+}
 
 </script>
 
