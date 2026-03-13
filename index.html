@@ -157,6 +157,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+let lastTypingTime = 0;
+
 // User is typing ref
 const typingRef = ref(db,"typing");
 
@@ -171,25 +173,36 @@ Notification.requestPermission();
 
 const chat = ref(db, "messages");
 
-function send(){
+function userTyping(){
 
 let name = document.getElementById("name").value;
 
 if(name.trim() === "") return;
 
+let now = Date.now();
+
+// only send every 2 seconds
+if(now - lastTypingTime < 2000) return;
+
+lastTypingTime = now;
+
 push(typingRef,{
 user:name,
-time:Date.now()
+time: now
 });
 
 }
 
 window.userTyping = userTyping;
 
-function userTyping(){
+
+function send(){
 
 let name = document.getElementById("name").value;
 let message = document.getElementById("message").value;
+
+if(message.trim() === "") return;
+if(name.trim() === "") return;
 
 let time = Date.now();
 
@@ -256,27 +269,58 @@ body: msg.message
 
 });
 
+onValue(chat,(snapshot)=>{
+
+if(!snapshot.exists()){
+document.getElementById("chat").innerHTML = "";
+}
+
+});
+
+let typingUsers = {};
+
 onChildAdded(typingRef,(data)=>{
 
 let info = data.val();
 let myName = document.getElementById("name").value;
 
-if(info.user !== myName){
+if(info.user === myName) return;
 
-document.getElementById("typingIndicator").innerText =
-info.user + " is typing...";
+typingUsers[info.user] = Date.now();
+
+updateTypingDisplay();
 
 setTimeout(()=>{
-document.getElementById("typingIndicator").innerText="";
-},2000);
-
-}
+delete typingUsers[info.user];
+updateTypingDisplay();
+},3000);
 
 });
+
+function updateTypingDisplay(){
+
+let users = Object.keys(typingUsers);
+
+if(users.length === 0){
+document.getElementById("typingIndicator").innerText = "";
+return;
+}
+
+if(users.length === 1){
+document.getElementById("typingIndicator").innerText =
+users[0] + " is typing...";
+return;
+}
+
+document.getElementById("typingIndicator").innerText =
+users.join(", ") + " are typing...";
+
+}
 
 window.send = send;
 
 const PASSWORD_HASH = "0d08f09ddf93c9c5dbe3f15cd2f022e900b6298b902627d61c18751911e96f38";
+const DURESS_PASSWORD_HASH = "8af6ecbdcdb3564c8cc2c2217992b4aafc3981aaeb450b6448a0b86d5bd4de02";
 
 async function sha256(text){
 
@@ -299,17 +343,63 @@ let p = document.getElementById("password").value;
 
 let hash = await sha256(p);
 
+// REAL PASSWORD
 if(hash === PASSWORD_HASH){
 
 document.getElementById("login").style.display = "none";
 document.getElementById("app").style.display = "block";
+return;
 
 }
-else{
+
+// DURESS PASSWORD
+if(hash === DURESS_PASSWORD_HASH){
+
+document.open();
+document.write(`
+<html>
+<head>
+<title>404</title>
+<style>
+body{
+font-family:Arial;
+background:white;
+color:black;
+text-align:center;
+padding-top:100px;
+}
+</style>
+</head>
+<body>
+<h1>404</h1>
+<p>This page could not be found.</p>
+</body>
+</html>
+`);
+document.close();
+
+return;
+
+}
 
 alert("Wrong password");
 
 }
+
+// DURESS PASSWORD
+if(hash === DURESS_PASSWORD_HASH){
+
+// wipe page
+document.body.innerHTML = "";
+
+// optional: remove title too
+document.title = "";
+
+return;
+
+}
+
+alert("Wrong password");
 
 }
 
