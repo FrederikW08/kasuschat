@@ -55,7 +55,31 @@ padding:10px;
   font-style: italic;
   line-height: 0.2;
 }
-  
+
+#quoteBox{
+position: fixed;
+right: 20px;
+top: 120px;
+width: 220px;
+background:#1b1b1b;
+border:1px solid #444;
+padding:15px;
+border-radius:8px;
+text-align:left;
+}
+
+#quoteBox h3{
+margin-top:0;
+font-size:18px;
+}
+
+#quoteText::before { content: "“"; }
+#quoteText::after { content: "”"; }
+
+#quoteText{
+font-style:italic;
+}
+
 </style>
 </head>
 
@@ -72,6 +96,10 @@ padding:10px;
   <img id="stig" src="https://media.licdn.com/dms/image/v2/D4E03AQE7-gQDf_HcOA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1695446369999?e=1775088000&v=beta&t=XRxKh5iTzsdL9XtULgTiiZzf0P1sKw2jgzt1g8a6jLQ">
 
   <h1>Kasus Chat</h1>
+  <div id="quoteBox">
+    <h3>Quote of the Day - 13/03/2026</h3>
+    <p id="quoteText">Så er der en masse børn og mødre der får børn sammen - Stig Ansbak Kassow</p>
+</div>
   <p id="discription1">Inspireret af Flemmings quote:</p>
   <p id="discription2">"Historie, kasus og alt det der...</p>
   <p id="discription2">men hvis bare der fandtes et annonymt og lukket chat sted."</p>
