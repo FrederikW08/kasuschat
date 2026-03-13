@@ -88,6 +88,11 @@ font-style:italic;
 margin-bottom:10px;
 }
 
+#quoteHistory{
+max-height:120px;
+overflow-y:auto;
+}
+
 </style>
 </head>
 
@@ -168,8 +173,6 @@ const chat = ref(db, "messages");
 
 function send(){
 
-function userTyping(){
-
 let name = document.getElementById("name").value;
 
 if(name.trim() === "") return;
@@ -180,6 +183,10 @@ time:Date.now()
 });
 
 }
+
+window.userTyping = userTyping;
+
+function userTyping(){
 
 let name = document.getElementById("name").value;
 let message = document.getElementById("message").value;
@@ -338,6 +345,8 @@ box.style.display = "none";
 }
 
 }
+
+window.toggleQuotes = toggleQuotes;
 
 </script>
 
