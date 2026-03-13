@@ -337,70 +337,49 @@ return hashHex;
 
 }
 
-async function login(){
+async function login() {
 
-let p = document.getElementById("password").value;
+  let p = document.getElementById("password").value;
 
-let hash = await sha256(p);
+  let hash = await sha256(p);
 
-// REAL PASSWORD
-if(hash === PASSWORD_HASH){
+  // REAL PASSWORD
+  if (hash === PASSWORD_HASH) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    return;
+  }
 
-document.getElementById("login").style.display = "none";
-document.getElementById("app").style.display = "block";
-return;
+  // DURESS PASSWORD
+  if (hash === DURESS_PASSWORD_HASH) {
+    // Show fake 404 page
+    document.open();
+    document.write(`
+      <html>
+      <head>
+      <title>404</title>
+      <style>
+      body{
+        font-family:Arial;
+        background:white;
+        color:black;
+        text-align:center;
+        padding-top:100px;
+      }
+      </style>
+      </head>
+      <body>
+      <h1>404</h1>
+      <p>This page could not be found.</p>
+      </body>
+      </html>
+    `);
+    document.close();
+    return;
+  }
 
-}
-
-// DURESS PASSWORD
-if(hash === DURESS_PASSWORD_HASH){
-
-document.open();
-document.write(`
-<html>
-<head>
-<title>404</title>
-<style>
-body{
-font-family:Arial;
-background:white;
-color:black;
-text-align:center;
-padding-top:100px;
-}
-</style>
-</head>
-<body>
-<h1>404</h1>
-<p>This page could not be found.</p>
-</body>
-</html>
-`);
-document.close();
-
-return;
-
-}
-
-alert("Wrong password");
-
-}
-
-// DURESS PASSWORD
-if(hash === DURESS_PASSWORD_HASH){
-
-// wipe page
-document.body.innerHTML = "";
-
-// optional: remove title too
-document.title = "";
-
-return;
-
-}
-
-alert("Wrong password");
-
+  // WRONG PASSWORD
+  alert("Wrong password");
 }
 
 window.login = login;
