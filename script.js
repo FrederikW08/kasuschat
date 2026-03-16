@@ -15,9 +15,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+function startPresence(){
+
 const onlineRef = ref(db,"onlineUsers");
 
-// unique id for this browser tab
 const tabId = crypto.randomUUID();
 
 const myOnlineRef = ref(db,"onlineUsers/"+tabId);
@@ -28,27 +29,7 @@ set(myOnlineRef,true);
 // remove when tab closes
 onDisconnect(myOnlineRef).remove();
 
-onValue(onlineRef,(snapshot)=>{
-
-let count = snapshot.numChildren();
-
-document.getElementById("onlineCount").innerText =
-count + " users online";
-
-});
-
-function startPresence(){
-
-const onlineRef = ref(db,"onlineUsers");
-
-const tabId = crypto.randomUUID();
-
-const myOnlineRef = ref(db,"onlineUsers/"+tabId);
-
-set(myOnlineRef,true);
-
-onDisconnect(myOnlineRef).remove();
-
+// track focus
 document.addEventListener("visibilitychange",()=>{
 
 if(document.hidden){
@@ -59,26 +40,23 @@ set(myOnlineRef,true);
 
 });
 
+// count users
 onValue(onlineRef,(snapshot)=>{
 
-let count = snapshot.numChildren();
+let count = 0;
+
+snapshot.forEach((child)=>{
+if(child.val() === true){
+count++;
+}
+});
 
 document.getElementById("onlineCount").innerText =
-count + " users online";
+count + (count === 1 ? " user online" : " users online")
 
 });
 
 }
-
-document.addEventListener("visibilitychange",()=>{
-
-if(document.hidden){
-set(myOnlineRef,false);
-}else{
-set(myOnlineRef,true);
-}
-
-});
 
 let lastTypingTime = 0;
 
