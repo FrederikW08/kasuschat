@@ -411,6 +411,7 @@ if(!window.isAdmin) return;
 // Prevent banning the owner
 if(uid === OWNER_UID){
   alert("You cannot ban the owner.");
+  return;
 }
 
 const banRef = ref(db,"moderation/banned/"+uid);
@@ -435,6 +436,9 @@ if(!window.isAdmin) return;
 remove(ref(db,"moderation/banned/"+uid));
 
 }
+
+window.banUser = banUser;
+window.unbanUser = unbanUser;
 
 function toggleQuotes(){
 
