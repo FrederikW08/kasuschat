@@ -205,6 +205,48 @@ document.getElementById("message").value="";
 
 }
 
+function loadAllMessages(){
+
+document.getElementById("chat").innerHTML = "";
+
+onValue(chat,(snapshot)=>{
+
+document.getElementById("chat").innerHTML = "";
+
+snapshot.forEach((child)=>{
+
+let msg = child.val();
+
+let time = new Date(msg.timestamp);
+let formattedTime = time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+let div = document.createElement("div");
+
+let content = msg.message;
+
+if(content.match(/\.(jpeg|jpg|gif|png|webp)$/i)){
+content = `<br><img src="${content}" style="max-width:250px;border-radius:6px;margin-top:5px;">`;
+}
+
+let uidText = "";
+
+if(window.isAdmin && msg.uid){
+uidText = ` <span style="color:#888;font-size:11px;">(${msg.uid})</span>`;
+}
+
+div.innerHTML = "["+formattedTime+"] <b>"+msg.name+"</b>"+uidText+": " + content;
+
+document.getElementById("chat").appendChild(div);
+
+});
+
+document.getElementById("chat").scrollTop =
+document.getElementById("chat").scrollHeight;
+
+});
+
+}
+
 onChildAdded(chat, (data) => {
 
   let msg = data.val();
@@ -326,6 +368,7 @@ document.getElementById("login").style.display = "none";
 document.getElementById("app").style.display = "block";
 
 startPresence();
+loadAllMessages();
 
 window.isAdmin = false;
 
@@ -338,6 +381,7 @@ document.getElementById("login").style.display = "none";
 document.getElementById("app").style.display = "block";
 
 startPresence();
+loadAllMessages();
 
 window.isAdmin = true;
 
