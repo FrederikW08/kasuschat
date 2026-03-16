@@ -50,16 +50,17 @@ Indtil videre, ingen ny quote...
 
   <div id="typingIndicator"></div>
 
-<div id="uploadArea">
-Drag & drop image here or click to upload
-<input type="file" id="imageInput" accept="image/*">
-</div>
-
 <div id="inputBar">
 <input id="name" placeholder="Your name">
 <input id="message" placeholder="Message" oninput="userTyping()" onkeypress="if(event.key==='Enter') send()">
 <button onclick="send()">Send</button>
 </div>
+
+<div id="uploadArea">
+Drag & drop image here or click to upload
+<input type="file" id="imageInput" accept="image/*">
+</div>
+
 </div>
 
 <script type="module" src="script.js"></script>
