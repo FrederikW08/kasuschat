@@ -84,7 +84,7 @@ margin:4px 0;
 
 #quoteBox{
 position:fixed;
-top:210px;
+top:230px;
 right:50px;
 width:220px;
 background:#1b1b1b;
@@ -148,7 +148,7 @@ width:120px;
 
 #uploadArea{
 border:2px dashed #555;
-padding:20px;
+padding:10px;
 margin:15px auto;
 max-width:400px;
 border-radius:10px;
