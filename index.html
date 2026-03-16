@@ -249,6 +249,7 @@ if(now - lastTypingTime < 2000) return;
 lastTypingTime = now;
 
 set(ref(db,"typing/" + name),{
+user: name,
 time: now
 });
 
@@ -347,13 +348,14 @@ typingUsers = {};
 
 snapshot.forEach((child)=>{
 
-let user = child.key;
 let info = child.val();
 
-if(user === myName) return;
+if(!info.user) return;
+
+if(info.user === myName) return;
 
 if(Date.now() - info.time < 3000){
-typingUsers[user] = true;
+typingUsers[info.user] = true;
 }
 
 });
