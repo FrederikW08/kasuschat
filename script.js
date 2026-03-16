@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, push, onChildAdded, remove, onValue, set, onDisconnect } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+// AdmPswrd blangsdal
+
 const firebaseConfig = {
   apiKey: "AIzaSyCl_6vsYoZkEBMUNf0P4CK01hKCwA5P0XQ",
   authDomain: "kasuschat.firebaseapp.com",
@@ -11,6 +13,13 @@ const firebaseConfig = {
   messagingSenderId: "953505535371",
   appId: "1:953505535371:web:0d44f20017bc8664948b8e"
 };
+
+// --- Persistent UID for the device/browser ---
+let currentUID = localStorage.getItem("chatUID");
+if (!currentUID) {
+    currentUID = crypto.randomUUID();
+    localStorage.setItem("chatUID", currentUID);
+}
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -128,52 +137,49 @@ return;
 }
 
 push(chat,{
-name:name,
-message:message,
-timestamp: time
+    uid: currentUID,   // store UID for admin
+    name: name,        // user-chosen display name
+    message: message,
+    timestamp: time
 });
 
 document.getElementById("message").value="";
 
 }
 
-onChildAdded(chat,(data)=>{
+onChildAdded(chat, (data) => {
 
-let msg = data.val();
+  let msg = data.val();
+  let time = new Date(msg.timestamp);
+  let formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-let time = new Date(msg.timestamp);
-let formattedTime = time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  let div = document.createElement("div");
 
-let div = document.createElement("div");
+  let content = msg.message;
 
-let content = msg.message;
+  // Check if message is an image link
+  if (content.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
+    content = `<br><img src="${content}" style="max-width:250px;border-radius:6px;margin-top:5px;">`;
+  }
 
-// check if message is an image link
-if(content.match(/\.(jpeg|jpg|gif|png|webp)$/i)){
-content = `<br><img src="${content}" style="max-width:250px;border-radius:6px;margin-top:5px;">`;
-}
+  // Include UID only for admin
+  let uidInfo = "";
+  if (window.isAdmin && msg.uid) {
+    uidInfo = ` <span style="color:#aaa;font-size:12px;">(UID: ${msg.uid})</span>`;
+  }
 
-div.innerHTML = "["+formattedTime+"] <b>"+msg.name+":</b> " + content;
+  div.innerHTML = `[${formattedTime}] <b>${msg.name}:</b>${uidInfo} ${content}`;
 
-document.getElementById("chat").appendChild(div);
+  document.getElementById("chat").appendChild(div);
+  document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
 
-document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
-
-// SHOW NOTIFICATION
-let myName = document.getElementById("name").value;
-
-if(document.hidden && msg.name !== myName){
-
-if(Notification.permission === "granted"){
-
-new Notification(msg.name + " says:", {
-body: msg.message
-});
-
-}
-
-}
-
+  // Show notifications for normal users
+  let myName = document.getElementById("name").value;
+  if (document.hidden && msg.name !== myName) {
+    if (Notification.permission === "granted") {
+      new Notification(msg.name + " says:", { body: msg.message });
+    }
+  }
 });
 
 onValue(chat,(snapshot)=>{
@@ -250,51 +256,52 @@ return hashHex;
 }
 
 async function login() {
-
   let p = document.getElementById("password").value;
-
   let hash = await sha256(p);
 
-  // REAL PASSWORD
   if (hash === PASSWORD_HASH) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("app").style.display = "block";
+    // Normal user login
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
 
-        startPresence();
+    // mark online
+    startPresence();
+
+    // mark as regular user
+    window.isAdmin = false;
+
     return;
   }
 
-  // DURESS PASSWORD
+  if (hash === ADMIN_PASSWORD_HASH) {
+    // Admin login
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+
+    startPresence();
+
+    // mark as admin
+    window.isAdmin = true;
+
+    return;
+  }
+
+  // DURESS PASSWORD (fake 404)
   if (hash === DURESS_PASSWORD_HASH) {
-    // Show fake 404 page
     document.open();
     document.write(`
-      <html>
-      <head>
-      <title>404</title>
-      <style>
-      body{
-        font-family:Arial;
-        background:white;
-        color:black;
-        text-align:center;
-        padding-top:100px;
-      }
-      </style>
-      </head>
-      <body>
-      <h1>404</h1>
-      <p>This page could not be found.</p>
-      </body>
-      </html>
+      <html><head><title>404</title></head>
+      <body><h1>404</h1><p>This page could not be found.</p></body></html>
     `);
     document.close();
     return;
   }
 
-  // WRONG PASSWORD
+  // Wrong password
   alert("Wrong password");
 }
+
+const ADMIN_PASSWORD_HASH = "cac51705e3ff34dce799e863ddd0c0747a3c6b640236a092b8223e4e1c635232"; // replace with SHA-256 hash of admin password
 
 window.login = login;
 
