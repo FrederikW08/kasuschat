@@ -50,6 +50,8 @@ if (!currentUID) {
     localStorage.setItem("chatUID", currentUID);
 }
 
+const OWNER_UID = "32df7477-c156-4968-9fd5-73b0bbcec9aa";
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -405,6 +407,11 @@ document.body.innerHTML = `
 function banUser(uid, reason="Rule violation", durationMinutes=null){
 
 if(!window.isAdmin) return;
+
+// Prevent banning the owner
+if(uid === OWNER_UID){
+  alert("You cannot ban the owner.");
+}
 
 const banRef = ref(db,"moderation/banned/"+uid);
 
