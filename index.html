@@ -204,7 +204,7 @@ Indtil videre, ingen quote for idag...
   <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, remove, onValue } 
+import { getDatabase, ref, push, onChildAdded, remove, onValue, set } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -244,13 +244,11 @@ if(name.trim() === "") return;
 
 let now = Date.now();
 
-// only send every 2 seconds
 if(now - lastTypingTime < 2000) return;
 
 lastTypingTime = now;
 
-push(typingRef,{
-user:name,
+set(ref(db,"typing/" + name),{
 time: now
 });
 
@@ -342,21 +340,25 @@ document.getElementById("chat").innerHTML = "";
 
 let typingUsers = {};
 
-onChildAdded(typingRef,(data)=>{
+onValue(typingRef,(snapshot)=>{
 
-let info = data.val();
 let myName = document.getElementById("name").value;
+typingUsers = {};
 
-if(info.user === myName) return;
+snapshot.forEach((child)=>{
 
-typingUsers[info.user] = Date.now();
+let user = child.key;
+let info = child.val();
+
+if(user === myName) return;
+
+if(Date.now() - info.time < 3000){
+typingUsers[user] = true;
+}
+
+});
 
 updateTypingDisplay();
-
-setTimeout(()=>{
-delete typingUsers[info.user];
-updateTypingDisplay();
-},3000);
 
 });
 
