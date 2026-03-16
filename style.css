@@ -71,20 +71,9 @@ margin:5px;
   width: 150px;
 }
 
-#discription1 {
-  font-size: 15px;
-}
-
-#discription2{
-font-size:15px;
-font-style:italic;
-line-height:0.8;
-margin:4px 0;
-}
-
 #quoteBox{
 position:fixed;
-top:213px;
+top:138px;
 right:50px;
 width:220px;
 background:#1b1b1b;
