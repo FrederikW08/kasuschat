@@ -2,8 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, push, onChildAdded, remove, onValue, set, onDisconnect, get } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// AdmPswrd blangsdal
-
 const firebaseConfig = {
   apiKey: "AIzaSyCl_6vsYoZkEBMUNf0P4CK01hKCwA5P0XQ",
   authDomain: "kasuschat.firebaseapp.com",
@@ -164,33 +162,6 @@ alert("Wrong admin password");
 
 document.getElementById("message").value="";
 return;
-
-}
-
-function banUser(uid, reason="Rule violation", durationMinutes=null){
-
-if(!window.isAdmin) return;
-
-const banRef = ref(db,"moderation/banned/"+uid);
-
-let expires = null;
-
-if(durationMinutes){
-expires = Date.now() + durationMinutes*60*1000;
-}
-
-set(banRef,{
-reason:reason,
-expires:expires
-});
-
-}
-
-function unbanUser(uid){
-
-if(!window.isAdmin) return;
-
-remove(ref(db,"moderation/banned/"+uid));
 
 }
 
@@ -430,6 +401,33 @@ document.body.innerHTML = `
 }
 
 });
+
+function banUser(uid, reason="Rule violation", durationMinutes=null){
+
+if(!window.isAdmin) return;
+
+const banRef = ref(db,"moderation/banned/"+uid);
+
+let expires = null;
+
+if(durationMinutes){
+expires = Date.now() + durationMinutes*60*1000;
+}
+
+set(banRef,{
+reason:reason,
+expires:expires
+});
+
+}
+
+function unbanUser(uid){
+
+if(!window.isAdmin) return;
+
+remove(ref(db,"moderation/banned/"+uid));
+
+}
 
 function toggleQuotes(){
 
