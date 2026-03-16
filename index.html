@@ -8,12 +8,12 @@
 <style>
 
 #name{
-width:20%;
-min-width:80px;
+width:120px;
 }
 
 #message{
-width:50%;
+flex:1;
+max-width:400px;
 }
 
 button{
@@ -26,16 +26,35 @@ font-family: Arial;
 background:#111;
 color:white;
 text-align:center;
+margin:0;
+overflow-x:hidden;
+}
+
+#app{
+max-width:900px;
+margin:auto;
+padding:20px;
+padding-right:260px;
+}
+
+#inputBar{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+margin-top:10px;
+flex-wrap:wrap;
 }
 
 #chat{
-width:90%;
+width:100%;
 max-width:600px;
-margin:auto;
+margin:20px auto;
 height:400px;
-overflow-y:scroll;
+overflow-y:auto;
 border:1px solid #444;
 padding:10px;
+box-sizing:border-box;
 }
 
 input{
@@ -65,17 +84,18 @@ margin:5px;
   font-size: 15px;
 }
 
-#discription2 {
-  font-size: 15px;
-  font-style: italic;
-  line-height: 0.2;
+#discription2{
+font-size:15px;
+font-style:italic;
+line-height:1.4;
+margin:4px 0;
 }
 
 #quoteBox{
-position: fixed;
-right: 40px;
-top: 145px;
-width: 220px;
+position:fixed;
+right:20px;
+top:120px;
+width:220px;
 background:#1b1b1b;
 border:1px solid #444;
 padding:15px;
@@ -107,22 +127,35 @@ max-height:120px;
 overflow-y:auto;
 }
 
-@media (max-width: 700px){
+@media (max-width:700px){
+
+#app{
+padding-right:20px;
+}
 
 #quoteBox{
 position:static;
-width:90%;
-margin:20px auto;
+width:100%;
+margin:20px 0;
 }
 
 #chat{
 height:300px;
 }
 
+#inputBar{
+flex-direction:column;
 }
 
-#app{
-padding-bottom:40px;
+#name,#message{
+width:90%;
+max-width:none;
+}
+
+button{
+width:120px;
+}
+
 }
 
 </style>
@@ -165,9 +198,11 @@ Indtil videre, ingen quote for idag...
 
   <div id="typingIndicator"></div>
 
-  <input id="name" placeholder="Your name">
-  <input id="message" placeholder="Message" oninput="userTyping()" onkeypress="if(event.key==='Enter') send()">
-  <button onclick="send()">Send</button>
+<div id="inputBar">
+<input id="name" placeholder="Your name">
+<input id="message" placeholder="Message" oninput="userTyping()" onkeypress="if(event.key==='Enter') send()">
+<button onclick="send()">Send</button>
+</div>
 </div>
 
   <script type="module">
