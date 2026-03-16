@@ -122,7 +122,7 @@ if(name.trim() === "") return;
 
 let now = Date.now();
 
-if(now - lastTypingTime < 2000) return;
+if(now - lastTypingTime < 1500) return;
 
 lastTypingTime = now;
 
@@ -173,6 +173,9 @@ push(chat,{
     message: message,
     timestamp: time
 });
+
+// stop typing indicator after sending
+remove(ref(db,"typing/" + name));
 
 document.getElementById("message").value="";
 
@@ -243,8 +246,10 @@ if(!info.user) return;
 
 if(info.user === myName) return;
 
-if(Date.now() - info.time < 3000){
+if(Date.now() - info.time < 2500){
 typingUsers[info.user] = true;
+}else{
+  remove(ref(db,"typing/" + info.user));
 }
 
 });
