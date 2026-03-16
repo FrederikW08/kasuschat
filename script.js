@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, remove, onValue, set, onDisconnect } 
+import { getDatabase, ref, push, onChildAdded, remove, onValue, set, onDisconnect, get } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // AdmPswrd blangsdal
@@ -16,6 +16,37 @@ const firebaseConfig = {
 
 // --- Persistent UID for the device/browser ---
 let currentUID = localStorage.getItem("chatUID");
+
+async function checkBan(){
+
+const banRef = ref(db,"moderation/banned/"+currentUID);
+
+const snapshot = await get(banRef);
+
+if(snapshot.exists()){
+
+const banInfo = snapshot.val();
+const now = Date.now();
+
+if(!banInfo.expires || banInfo.expires > now){
+
+// still banned
+window.location.href = "banned.html";
+return true;
+
+}else{
+
+// ban expired
+remove(banRef);
+
+}
+
+}
+
+return false;
+
+}
+
 if (!currentUID) {
     currentUID = crypto.randomUUID();
     localStorage.setItem("chatUID", currentUID);
@@ -133,6 +164,33 @@ alert("Wrong admin password");
 
 document.getElementById("message").value="";
 return;
+
+}
+
+function banUser(uid, reason="Rule violation", durationMinutes=null){
+
+if(!window.isAdmin) return;
+
+const banRef = ref(db,"moderation/banned/"+uid);
+
+let expires = null;
+
+if(durationMinutes){
+expires = Date.now() + durationMinutes*60*1000;
+}
+
+set(banRef,{
+reason:reason,
+expires:expires
+});
+
+}
+
+function unbanUser(uid){
+
+if(!window.isAdmin) return;
+
+remove(ref(db,"moderation/banned/"+uid));
 
 }
 
@@ -256,49 +314,54 @@ return hashHex;
 }
 
 async function login() {
-  let p = document.getElementById("password").value;
-  let hash = await sha256(p);
 
-  if (hash === PASSWORD_HASH) {
-    // Normal user login
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").style.display = "block";
+if(await checkBan()) return;
 
-    // mark online
-    startPresence();
+let p = document.getElementById("password").value;
+let hash = await sha256(p);
 
-    // mark as regular user
-    window.isAdmin = false;
+if (hash === PASSWORD_HASH) {
 
-    return;
-  }
+document.getElementById("login").style.display = "none";
+document.getElementById("app").style.display = "block";
 
-  if (hash === ADMIN_PASSWORD_HASH) {
-    // Admin login
-    document.getElementById("login").style.display = "none";
-    document.getElementById("app").style.display = "block";
+startPresence();
 
-    startPresence();
+window.isAdmin = false;
 
-    // mark as admin
-    window.isAdmin = true;
+return;
+}
 
-    return;
-  }
+if (hash === ADMIN_PASSWORD_HASH) {
 
-  // DURESS PASSWORD (fake 404)
-  if (hash === DURESS_PASSWORD_HASH) {
-    document.open();
-    document.write(`
-      <html><head><title>404</title></head>
-      <body><h1>404</h1><p>This page could not be found.</p></body></html>
-    `);
-    document.close();
-    return;
-  }
+document.getElementById("login").style.display = "none";
+document.getElementById("app").style.display = "block";
 
-  // Wrong password
-  alert("Wrong password");
+startPresence();
+
+window.isAdmin = true;
+
+return;
+}
+
+if (hash === DURESS_PASSWORD_HASH) {
+
+document.open();
+document.write(`
+<html>
+<head><title>404</title></head>
+<body>
+<h1>404</h1>
+<p>This page could not be found.</p>
+</body>
+</html>
+`);
+document.close();
+return;
+}
+
+alert("Wrong password");
+
 }
 
 const ADMIN_PASSWORD_HASH = "cac51705e3ff34dce799e863ddd0c0747a3c6b640236a092b8223e4e1c635232"; // replace with SHA-256 hash of admin password
