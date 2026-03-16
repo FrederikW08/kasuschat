@@ -1,0 +1,165 @@
+#name{
+width:120px;
+}
+
+#message{
+flex:1;
+max-width:305px;
+}
+
+button{
+width:90px;
+padding:10px;
+}
+
+body{
+font-family: Arial;
+background:#111;
+color:white;
+text-align:center;
+margin:0;
+overflow-x:hidden;
+}
+
+#app{
+max-width:900px;
+margin:auto;
+padding:20px;
+padding-right:0px;
+}
+
+#inputBar{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+margin-top:10px;
+flex-wrap:wrap;
+}
+
+#chat{
+width:100%;
+max-width:600px;
+margin:20px auto;
+height:300px;
+overflow-y:auto;
+border:1px solid #444;
+padding:10px;
+box-sizing:border-box;
+}
+
+input{
+padding:10px;
+margin:5px;
+}
+
+#flemming {
+  display: none;
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+}
+
+#stig {
+  display: none;
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 150px;
+}
+
+#discription1 {
+  font-size: 15px;
+}
+
+#discription2{
+font-size:15px;
+font-style:italic;
+line-height:0.8;
+margin:4px 0;
+}
+
+#quoteBox{
+position:fixed;
+top:180px;
+right:50px;
+width:220px;
+background:#1b1b1b;
+border:1px solid #444;
+padding:15px;
+border-radius:8px;
+text-align:left;
+}
+
+#quoteBox h3{
+margin-top:0;
+font-size:18px;
+}
+
+#quoteText::before { content: "“"; }
+#quoteText::after { content: "”"; }
+
+#quoteText{
+font-style:italic;
+}
+
+#typingIndicator{
+height:20px;
+color:#aaa;
+font-style:italic;
+margin-bottom:10px;
+}
+
+#quoteHistory{
+max-height:120px;
+overflow-y:auto;
+}
+
+@media (max-width:700px){
+
+#quoteBox{
+display:none;
+position:static;
+width:100%;
+margin:20px 0;
+}
+
+#chat{
+height:300px;
+}
+
+#inputBar{
+flex-direction:column;
+}
+
+#name,#message{
+width:90%;
+max-width:none;
+}
+
+button{
+width:120px;
+}
+
+}
+
+#uploadArea{
+border:2px dashed #555;
+padding:20px;
+margin:15px auto;
+max-width:400px;
+border-radius:10px;
+color:#aaa;
+cursor:pointer;
+}
+
+#uploadArea:hover{
+border-color:#888;
+}
+
+#imageInput{
+display:none;
+}
