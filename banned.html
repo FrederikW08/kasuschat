@@ -19,4 +19,12 @@
   <p>You cannot access the chat.</p>
   <p>If you think this is a mistake, contact the admin.</p>
 </body>
+<script>
+const params = new URLSearchParams(window.location.search);
+const reason = params.get("reason");
+
+if(reason){
+document.getElementById("reason").innerText = reason;
+}
+</script>
 </html>

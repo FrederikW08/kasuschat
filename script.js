@@ -15,6 +15,16 @@ const firebaseConfig = {
 // --- Persistent UID for the device/browser ---
 let currentUID = localStorage.getItem("chatUID");
 
+if (!currentUID) {
+    currentUID = crypto.randomUUID();
+    localStorage.setItem("chatUID", currentUID);
+}
+
+// Firebase start
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Ban checker
 async function checkBan(){
 
 const banRef = ref(db,"moderation/banned/"+currentUID);
@@ -28,13 +38,11 @@ const now = Date.now();
 
 if(!banInfo.expires || banInfo.expires > now){
 
-// still banned
-window.location.href = "banned.html";
+window.location.href = "banned.html?reason=" + encodeURIComponent(banInfo.reason || "Banned");
 return true;
 
 }else{
 
-// ban expired
 remove(banRef);
 
 }
@@ -45,15 +53,7 @@ return false;
 
 }
 
-if (!currentUID) {
-    currentUID = crypto.randomUUID();
-    localStorage.setItem("chatUID", currentUID);
-}
-
 const OWNER_UID = "32df7477-c156-4968-9fd5-73b0bbcec9aa";
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 
 function startPresence(){
 
@@ -219,41 +219,6 @@ document.getElementById("chat").scrollHeight;
 });
 
 }
-
-onChildAdded(chat, (data) => {
-
-  let msg = data.val();
-  let time = new Date(msg.timestamp);
-  let formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  let div = document.createElement("div");
-
-  let content = msg.message;
-
-  // Check if message is an image link
-  if (content.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
-    content = `<br><img src="${content}" style="max-width:250px;border-radius:6px;margin-top:5px;">`;
-  }
-
-  // Include UID only for admin
-  let uidInfo = "";
-  if (window.isAdmin && msg.uid) {
-    uidInfo = ` <span style="color:#aaa;font-size:12px;">(UID: ${msg.uid})</span>`;
-  }
-
-  div.innerHTML = `[${formattedTime}] <b>${msg.name}:</b>${uidInfo} ${content}`;
-
-  document.getElementById("chat").appendChild(div);
-  document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
-
-  // Show notifications for normal users
-  let myName = document.getElementById("name").value;
-  if (document.hidden && msg.name !== myName) {
-    if (Notification.permission === "granted") {
-      new Notification(msg.name + " says:", { body: msg.message });
-    }
-  }
-});
 
 onValue(chat,(snapshot)=>{
 
@@ -498,6 +463,7 @@ let imageUrl = data.data.url;
 let name = document.getElementById("name").value;
 
 push(chat,{
+uid: currentUID,
 name:name,
 message:imageUrl,
 timestamp: Date.now()
