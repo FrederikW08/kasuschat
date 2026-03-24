@@ -193,8 +193,7 @@ snapshot.forEach((child)=>{
 
 let msg = child.val();
 
-let time = new Date(msg.timestamp);
-let formattedTime = time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+let formattedTime = formatTime(msg.timestamp);
 
 let div = document.createElement("div");
 
@@ -296,6 +295,36 @@ const hashHex = hashArray.map(b => b.toString(16).padStart(2,"0")).join("");
 
 return hashHex;
 
+}
+
+function formatTime(timestamp){
+
+  let date = new Date(timestamp);
+  let now = new Date();
+
+  let isToday =
+    date.toDateString() === now.toDateString();
+
+  let yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+
+  let isYesterday =
+    date.toDateString() === yesterday.toDateString();
+
+  let time = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  if(isToday){
+    return time;
+  }
+
+  if(isYesterday){
+    return "Yesterday " + time;
+  }
+
+  return date.toLocaleDateString() + " " + time;
 }
 
 async function login() {
