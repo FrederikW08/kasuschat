@@ -53,24 +53,6 @@ padding:10px;
 margin:5px;
 }
 
-#flemming {
-  display: none;
-  position: fixed;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 200px;
-}
-
-#stig {
-  display: none;
-  position: fixed;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 150px;
-}
-
 #quoteBox{
 position:fixed;
 top:138px;
