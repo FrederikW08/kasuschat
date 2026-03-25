@@ -23,12 +23,29 @@
     }
 
     .quote {
-      background: #1a1a1a;
+      margin-bottom: 15px;
+      background: #111;
       padding: 10px;
-      margin: 10px 0;
-      border-left: 3px solid #555;
-      border-radius: 5px;
-      line-height: 1.4;
+      border-radius: 8px;
+    }
+
+    .quote:hover {
+      margin-bottom: 15px;
+      background: #303030;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .quote-text {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .quote-date {
+      font-size: 12px;
+      color: #888;
+      display: block;
+      margin-top: 3px;
     }
 
     a {
@@ -43,6 +60,14 @@
 
 <h1>Previous Quotes</h1>
 
+<div class="quote">
+  <p class="quote-text">
+    Jeg er jo sådan lidt halvdøv - Nathalie Halphen
+  </p>
+  <span class="quote-date">
+    24/03/2026
+  </span>
+</div>
 <div class="quote">23/03/2026 - Nu skal i, i helvede - Flemming Borg Nielsen</div>
 <div class="quote">19/03/2026 - Everything just went to shit - Bertil Hammer Schousboe</div>
 <div class="quote">17/03/2026 - Så lukker de for olien nede i hummus-stadt - Lars Egeskjold Levinsen</div>
