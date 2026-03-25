@@ -84,9 +84,6 @@ margin-top:0;
 font-size:18px;
 }
 
-#quoteText::before { content: "“"; }
-#quoteText::after { content: "”"; }
-
 #quoteText{
 font-style:italic;
 }
